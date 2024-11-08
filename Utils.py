@@ -93,3 +93,18 @@ def cal_cosine(sent_one, sent_two):
 
     return cos_sim[0][0]
 
+
+# compare sentences
+def senetnce_comparer(user_transcript, actual_sentence):
+    user_words = user_transcript.split(" ")
+
+    final_view = ""
+
+    for word in user_words:
+        if word in actual_sentence:
+            final_view += word + " "
+        else:
+            final_view += f":red[{word}] "
+
+    return final_view
+
