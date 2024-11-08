@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_mic_recorder import mic_recorder
 
-from Utils import generate_random_sentence, create_audio, save_audio_wav, get_transcript, cal_cosine
+from Utils import generate_random_sentence, create_audio, save_audio_wav, get_transcript, cal_cosine, senetnce_comparer
 
 
 # constants
@@ -64,15 +64,16 @@ if not st.session_state.random_sentence:
     st.session_state.random_sentence = text_output
     # set the audio
     st.audio(audio_output.name, format='audio/wav')
-    with st.expander("See the transcript"):
-        st.subheader(text_output)
+    st.header("Transcript")
+    st.subheader(text_output)
 else:
     # in case when the web app re runs, stays with the same data
     audio_rerun_output = create_audio(st.session_state.random_sentence)
     # create the audio from the same text and display
     st.audio(audio_rerun_output.name, format='audio/wav')
-    with st.expander("See the transcript"):
-        st.subheader(st.session_state.random_sentence)
+    st.header("Transcript")
+    st.subheader(st.session_state.random_sentence)
+        
 
 # start recording
 st.header("Record ⏺️")
@@ -106,14 +107,20 @@ if st.session_state.recorder:
         # evaluations
         st.header("Evaluations 🗒")
         if cosine_score > SCORE_BENCHMARK:
-            st.header("Good Work Mate! 😍")
+            st.subheader("Good Work Mate! 😍")
             st.subheader("Your score is {}".format(cosine_score))
+            st.markdown("### Your Transcript!")
+            st.write("Missing/Incorrect words are highlighted in red color for you!")
+            st.markdown(f"#### {senetnce_comparer(user_audio_transcript, st.session_state.random_sentence)}")
             st.subheader("You have Good Speaking Capabilities! Keep up ✅")
             # create a button re try
             st.button("Wanna Tray Again 🤔", on_click=shuffle_sentence_and_disable_audio, key='success_btn')
         else:
             st.header("Having Little Bit of Trouble! 🤗")
             st.subheader("Your score is {}".format(cosine_score))
+            st.markdown("### Your Transcript!")
+            st.write("Missing/Incorrect words are highlighted in red color for you!")
+            st.markdown(f"#### {senetnce_comparer(user_audio_transcript, st.session_state.random_sentence)}")
             st.subheader("Let's Try Again 💪")
             # create a button re try
             st.button("Please Tray Again 😊", on_click=shuffle_sentence_and_disable_audio, key='failure_btn')
